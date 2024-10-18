@@ -1,0 +1,87 @@
+:root {
+  --winnercolor: #28a745; 
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f3f3f3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.game {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-gap: 10px;
+  margin-bottom: 20px;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.box:hover {
+  background-color: #cce7ff;
+  transform: scale(1.05);
+}
+
+.box.winner {
+  background-color: var(--winnercolor);
+  color: var(--winnercolor);
+  transform: scale(1.1);
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #007BFF;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
