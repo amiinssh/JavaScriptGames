@@ -1,183 +1,172 @@
-const grid = document.querySelector(".grid");
-const blockWidth = 100;
-const blockHeight = 20;
-const boardWidth = 560;
-const ballDiameter = 20;
-const boardHeight = 300;
-const scoreDisplay = document.getElementById("score");
+const timeLeftDisplay = document.querySelector("#time-left");
+const resultDisplay = document.querySelector("#result");
+const startPauseButton = document.querySelector("#start-pause-button");
+const squares = document.querySelectorAll(".grid div");
+const logsLeft = document.querySelectorAll(".log-left");
+const logsRight = document.querySelectorAll(".log-right");
+const carsLeft = document.querySelectorAll(".car-left");
+const carsRight = document.querySelectorAll(".car-right");
 
-const userStart = [230, 10];
-const ballStart = [270, 40];
+const width = 9;
 
-let ballCurrentPosition = ballStart;
-let currentPosition = userStart;
-let xDirection = 2;
-let yDirection = 2;
+let currentIndex = 76;
 let timerId;
-let score = 0
+let currentTime = 20;
+let outcomeTimerId;
 
-class Block {
-  constructor(xAxis, yAxis) {
-    this.bottomLeft = [xAxis, yAxis];
-    this.bottomRight = [xAxis + blockWidth, yAxis];
-    this.topLeft = [xAxis, yAxis + blockHeight];
-    this.topRight = [xAxis + blockWidth, yAxis + blockHeight];
-  }
-}
+function moveFrog(e) {
+  squares[currentIndex].classList.remove("frog");
 
-const blocks = [
-  new Block(10, 270),
-  new Block(120, 270),
-  new Block(230, 270),
-  new Block(340, 270),
-  new Block(450, 270),
-  new Block(10, 240),
-  new Block(120, 240),
-  new Block(230, 240),
-  new Block(340, 240),
-  new Block(450, 240),
-  new Block(10, 210),
-  new Block(120, 210),
-  new Block(230, 210),
-  new Block(340, 210),
-  new Block(450, 210),
-];
-
-function addBlocks() {
-  for (let i = 0; i < blocks.length; i++) {
-    const block = document.createElement("div");
-    block.classList.add("block");
-
-    block.style.left = blocks[i].bottomLeft[0] + "px";
-    block.style.bottom = blocks[i].bottomLeft[1] + "px";
-    grid.appendChild(block);
-  }
-}
-
-addBlocks();
-
-const user = document.createElement("div");
-user.classList.add("user");
-drawUser();
-grid.appendChild(user);
-
-function drawUser() {
-  user.style.left = currentPosition[0] + "px";
-  user.style.bottom = currentPosition[1] + "px";
-}
-
-function drawBall() {
-  ball.style.left = ballCurrentPosition[0] + "px";
-  ball.style.bottom = ballCurrentPosition[1] + "px";
-}
-
-function moveUser(e) {
   switch (e.key) {
     case "ArrowLeft":
-      if (currentPosition[0] > 0) {
-        currentPosition[0] -= 10;
-        drawUser();
-      }
+      if (currentIndex % width !== 0) currentIndex -= 1;
       break;
     case "ArrowRight":
-      if (currentPosition[0] < boardWidth - blockWidth) {
-        currentPosition[0] += 10;
-        drawUser();
-      }
+      if (currentIndex % width < width - 1) currentIndex += 1;
+      break;
+    case "ArrowUp":
+      if (currentIndex - width >= 0) currentIndex -= width;
+      break;
+    case "ArrowDown":
+      if (currentIndex + width < width * width) currentIndex += width;
+      break;
+  }
+
+  squares[currentIndex].classList.add("frog");
+}
+
+function autoMoveElements() {
+  currentTime--;
+  timeLeftDisplay.textContent = currentTime;
+  logsLeft.forEach((logLeft) => moveLogLeft(logLeft));
+  logsRight.forEach((logRight) => moveLogRight(logRight));
+  carsLeft.forEach((carLeft) => moveCarLeft(carLeft));
+  carsRight.forEach((carRight) => moveCarRight(carRight));
+}
+
+function checkOutComes() {
+  lose();
+  win();
+}
+
+function moveLogLeft(logLeft) {
+  switch (true) {
+    case logLeft.classList.contains("l1"):
+      logLeft.classList.remove("l1");
+      logLeft.classList.add("l2");
+      break;
+    case logLeft.classList.contains("l2"):
+      logLeft.classList.remove("l2");
+      logLeft.classList.add("l3");
+      break;
+    case logLeft.classList.contains("l3"):
+      logLeft.classList.remove("l3");
+      logLeft.classList.add("l4");
+      break;
+    case logLeft.classList.contains("l4"):
+      logLeft.classList.remove("l4");
+      logLeft.classList.add("l5");
+      break;
+    case logLeft.classList.contains("l5"):
+      logLeft.classList.remove("l5");
+      logLeft.classList.add("l1");
       break;
   }
 }
 
-document.addEventListener("keydown", moveUser);
-
-const ball = document.createElement("div");
-ball.classList.add("ball");
-drawBall();
-grid.appendChild(ball);
-
-function moveBall() {
-  ballCurrentPosition[0] += xDirection;
-  ballCurrentPosition[1] += yDirection;
-  drawBall();
-  checkForCollisions();
+function moveLogRight(logRight) {
+  switch (true) {
+    case logRight.classList.contains("l1"):
+      logRight.classList.remove("l1");
+      logRight.classList.add("l5");
+      break;
+    case logRight.classList.contains("l2"):
+      logRight.classList.remove("l2");
+      logRight.classList.add("l1");
+      break;
+    case logRight.classList.contains("l3"):
+      logRight.classList.remove("l3");
+      logRight.classList.add("l2");
+      break;
+    case logRight.classList.contains("l4"):
+      logRight.classList.remove("l4");
+      logRight.classList.add("l3");
+      break;
+    case logRight.classList.contains("l5"):
+      logRight.classList.remove("l5");
+      logRight.classList.add("l4");
+      break;
+  }
 }
 
-timerId = setInterval(moveBall, 30);
-
-function checkForCollisions() {
-  for (let i = 0; i < blocks.length; i++) {
-    if (
-      ballCurrentPosition[0] > blocks[i].bottomLeft[0] &&
-      ballCurrentPosition[0] < blocks[i].bottomRight[0] &&
-      (ballCurrentPosition[1] + ballDiameter) > blocks[i].bottomLeft[1] &&
-      ballCurrentPosition[1] < blocks[i].topLeft[1]
-    ) {
-      const allBlocks = Array.from(document.querySelectorAll(".block"));
-      allBlocks[i].classList.remove("block");
-      blocks.splice(i, 1);
-      changeDirection();
-      score++;
-      scoreDisplay.innerHTML = score;
-
-      if (blocks.length === 0) {
-        scoreDisplay.innerHTML = "YOU WIN";
-        clearInterval(timerId);
-        document.removeEventListener("keydown", moveUser);
-      }
-    }
+function moveCarLeft(carLeft) {
+  switch (true) {
+    case carLeft.classList.contains("c1"):
+      carLeft.classList.remove("c1");
+      carLeft.classList.add("c2");
+      break;
+    case carLeft.classList.contains("c2"):
+      carLeft.classList.remove("c2");
+      carLeft.classList.add("c3");
+      break;
+    case carLeft.classList.contains("c3"):
+      carLeft.classList.remove("c3");
+      carLeft.classList.add("c1");
+      break;
   }
+}
 
-  if (ballCurrentPosition[0] >= boardWidth - ballDiameter || ballCurrentPosition[0] <= 0) {
-    xDirection *= -1;
+function moveCarRight(carRight) {
+  switch (true) {
+    case carRight.classList.contains("c1"):
+      carRight.classList.remove("c1");
+      carRight.classList.add("c3");
+      break;
+    case carRight.classList.contains("c2"):
+      carRight.classList.remove("c2");
+      carRight.classList.add("c1");
+      break;
+    case carRight.classList.contains("c3"):
+      carRight.classList.remove("c3");
+      carRight.classList.add("c2");
+      break;
   }
+}
 
-  if (ballCurrentPosition[1] >= boardHeight - ballDiameter) {
-    yDirection *= -1; 
-  }
-
+function lose() {
   if (
-    ballCurrentPosition[0] > currentPosition[0] &&
-    ballCurrentPosition[0] < currentPosition[0] + blockWidth &&
-    ballCurrentPosition[1] > currentPosition[1] &&
-    ballCurrentPosition[1] < currentPosition[1] + blockHeight
+    squares[currentIndex].classList.contains("c1") ||
+    squares[currentIndex].classList.contains("l4") ||
+    squares[currentIndex].classList.contains("l5") ||
+    currentTime <= 0
   ) {
-    yDirection *= -1; 
-  }
-
-  if (ballCurrentPosition[1] <= 0) {
+    resultDisplay.textContent = "You Lose!";
     clearInterval(timerId);
-    scoreDisplay.innerHTML = "You lose";
-    document.removeEventListener("keydown", moveUser);
+    clearInterval(outcomeTimerId)
+    squares[currentIndex].classList.remove("frog");
+    document.removeEventListener("keyup", moveFrog);
   }
 }
 
-
-
-  if (ballCurrentPosition[1] <= 0) {
+function win() {
+  if (squares[currentIndex].classList.contains("ending-block")) {
+    resultDisplay.textContent = "You Win!";
     clearInterval(timerId);
-    scoreDisplay.innerHTML = "You lose";
-    document.removeEventListener("keydown", moveUser);
-  }
-
-
-function changeDirection() {
-  if (xDirection === 2 && yDirection === 2) {
-    yDirection = -2;
-    return;
-  }
-
-  if (xDirection === 2 && yDirection === -2) {
-    xDirection = -2;
-    return;
-  }
-
-  if (xDirection === -2 && yDirection === -2) {
-    yDirection = 2;
-    return;
-  }
-
-  if (xDirection === -2 && yDirection === 2) {
-    xDirection = 2;
-    return;
+    clearInterval(outcomeTimerId)
+    document.removeEventListener("keyup", moveFrog);
   }
 }
+
+startPauseButton.addEventListener("click", () => {
+  if (timerId) {
+    clearInterval(timerId);
+    clearInterval(outcomeTimerId);
+    outcomeTimerId = null;
+    timerId = null;
+    document.removeEventListener("keyup", moveFrog);
+  } else {
+    timerId = setInterval(autoMoveElements, 1000);
+    outcomeTimerId = setInterval(checkOutComes, 50);
+    document.addEventListener("keyup", moveFrog);
+  }
+});

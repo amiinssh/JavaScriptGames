@@ -1,81 +1,66 @@
-body {
+.grid {
+    border: 2px solid #000;
+    height: 180px;
+    width: 180px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f8ff;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
+    flex-wrap: wrap;
+    background-color: #f0f0f0; 
+    border-radius: 8px; 
   }
   
-  #score {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .grid {
-    position: relative;
-    width: 560px;
-    height: 300px;
-    border: solid 3px black;
-    background-color: #e6e6e6;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .block {
-    position: absolute;
-    width: 100px;
+  .grid div {
     height: 20px;
-    background-color: #4caf50;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .user {
-    position: absolute;
-    width: 100px;
-    height: 20px;
-    background-color: #ff5722;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  .ball {
-    position: absolute;
     width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #ffeb3b;
-    border: solid 2px black;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box; 
   }
   
-  @media (max-width: 600px) {
-    .grid {
-      width: 90%;
-      height: 50vh;
-    }
+  .ending-block {
+    background-color: red;
+    border: 1px solid #800000; 
+  }
   
-    .block {
-      width: calc(90% / 5);
-      height: 15px;
-    }
+  .starting-block {
+    background-color: blue;
+    border: 1px solid #000080; 
+  }
   
-    .user {
-      width: calc(90% / 5);
-      height: 15px;
-    }
+  .l1,
+  .l2,
+  .l3 {
+    background-color: brown;
+    border: 1px solid #654321; 
+  }
   
-    .ball {
-      width: 15px;
-      height: 15px;
+  .l4,
+  .l5 {
+    background-color: lightblue;
+    border: 1px solid #4682b4; 
+  }
+  
+  .c1 {
+    background-color: black;
+    border-radius: 2px; 
+  }
+  
+  .c2,
+  .c3 {
+    background-color: lightgrey;
+    border-radius: 2px; 
+  }
+  
+  .frog {
+    background-color: green;
+    border: 1px solid #006400; 
+    border-radius: 50%; 
+    animation: bounce 0.5s infinite alternate;
+  }
+  
+  @keyframes bounce {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-2px);
     }
   }
   
